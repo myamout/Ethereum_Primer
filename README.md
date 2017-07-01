@@ -76,3 +76,58 @@ function. We pass in an item to save into our mapping. You'll notice the object 
 pass a wallet address. `msg.sender` is equal to the wallet address we pass. I'll go over this in more detail when we go over interacting with our smart
 contract. Lasty we have our getter function. We simply return the 32 byte hex string associated with the address. There you have it, that is your first
 Ethereum smart contract! When we go our Dapps, decentralized applications, we'll build upon this example by adding some more complexity to the contract.
+
+## Compiling Our Contracts And Migration To The Testrpc
+Now that we have a smart contract lets compile it and move it onto the testrpc! To compile our contract run the command `truffle compile`. Note that you'll get a warning saying our variable x inside of the fallback function isn't used. This is fine as fallback functions are not allowed to return
+anything. Now you'll notice a build folder was just created. If you look inside you should see a contracts folder and inside that a JSON file. This
+JSON file contains our contract object essentially. I'm going to cover the two important values inside of the JSON file, the abi and unlinked binary.
+The contract's abi is what tells the blockchain what methods our contract has and what they return. The unlinked binary is essentially the byte code of the contract and this is what gets run on the blockchain. Now that we have compiled our contract lets talk about migration.
+
+### Running The Testrpc
+  - Open a new terminal window and navigate to the directory our project is in.
+  - Run the command `yarn testrpc`. This will start up the testrpc blockchain.
+  You'll notice that the testrpc is officially running and you'll be able to see the ten account address you have access to. There are extra command line arguments you can add when you run the testrpc, like set the gas price, but for our primer the default is more than fine.
+
+### Contract Migration
+As I stated earlier our main.js file handles all of our migrations and interactions with the smart contract. Because I'll be referencing the main.js file for the next few steps I'm only going to show the code for each step and do a full paste at the end of the guide. I'll paste the necessary code
+for this step below...
+```
+// These are the variable definitions needed for the migrations
+// Note that most of these are needed for each step so reference back here if you need them again
+import Web3 from 'web3';
+import contract from 'truffle-contract';
+import fs from 'fs';
+
+const compiledJson = JSON.parse(fs.readFileSync('build/contracts/StoreInformation.json'));
+const provider = new Web3.providers.HttpProvider("http://localhost:8545");
+const contractAddr = fs.readFileSync("contractAddr.txt").toString();
+
+const web3 = new Web3();
+web3.setProvider(provider);
+
+// Migration function
+function migrateContract() {
+  console.log('migrating');
+  try {
+    const VaultContract = web3.eth.contract(compiledJson.abi);
+    const deployedVaultContract = VaultContract.new({data: compiledJson.unlinked_binary, from: web3.eth.accounts[0], gas: 4700000});
+    console.log('contract migrated...');
+  } catch (error) {
+    console.log(error);
+    console.log('migration failed');
+  }
+}
+```
+Okay so first we're going to import all of our modules. For migrating our contract we don't actaully need the truffle-contract module, but for
+completeness I left it in for future reference. First we need to grab the JSON file we got when we compiled our contract using the `fs` module.
+Next we need to create our provider variable. The provider will point our web3 object and in the future our contract instance to the blockchain
+we are working with. Next we'll create our web3 object and then pass the provider we just made so our web3 object is aware of the testrpc we just launched. Now we can take a look at our migration function. First we're going to create a contract object. web3 allows us to do that by really easily
+by calling the contract function and passing the defined abi from our JSON file. Next we'll deploy a new contract to the testrpc. Lets break down the
+line `const deployedVaultContract = VaultContract.new({data: compiledJson.unlinked_binary, from: web3.eth.accounts[0], gas: 4700000})`. New means
+we want to make a new contract. Other options available to us are at and update. We'll be using the at constructor later in the primer. Next we need
+to pass in an object that contains a few things. The data field will take the byte code we discussed earlier. The blockchain needs to keep track of
+what address deploys which contract so we need to pass in an address. Because we pointed our web3 object to the testrpc we can access the ten
+accounts that comes with it. We'll look into some more web3 functions later as well. Finally to deploy a smart contract we need give it some gas
+as well. Now look at our testrpc running in the terminal, you should be able to see the contract transaction. You should see the address the contract is at, you'll need to copy and paste that into the `contractAddr.txt` file so we can access that contract in future steps.
+
+## Interacting With Our Contract
