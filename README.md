@@ -130,4 +130,51 @@ what address deploys which contract so we need to pass in an address. Because we
 accounts that comes with it. We'll look into some more web3 functions later as well. Finally to deploy a smart contract we need give it some gas
 as well. Now look at our testrpc running in the terminal, you should be able to see the contract transaction. You should see the address the contract is at, you'll need to copy and paste that into the `contractAddr.txt` file so we can access that contract in future steps.
 
+  - Run the command `yarn migrate` to migrate our contract to the testrpc
+
 ## Interacting With Our Contract
+Now that our smart contract is on the blockchain lets interact with it! Like before I'll show some code and we'll go over everything. Before I'd like to touch on two important things when interacting with the blockchain. When you call a function that alters a variable inside of the contract that will require gas. However, when you are simply accessing and returning a value that requires no gas since you aren't altering anything. You specify the operation with the `.call()` addition to the method call. You'll see this in action soon.
+
+### Updating Our Mapping Variable
+```
+// The variable definitions are the same as before, but we need to add our truffle-contract definition
+const VaultContract = contract({
+    abi: compiledJson.abi,
+    unlinked_binary: compiledJson.unlinked_binary
+});
+// Point our contract to our testrpc instance
+VaultContract.setProvider(provider);
+
+// Update function
+function addInfo(info) {
+  VaultContract.at(contractAddr).then((instance) => {
+    return instance.storeInVault(info, {from: web3.eth.accounts[0]});
+  }).then((response) => {
+    console.log(response);
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+```
+First we'll need to create a contract object using truffle-contract. As I mentioned earlier web3.js allows us to interact with our smart contracts, however by using truffle we'll be using promises which in turn makes the interactions better as each step will be completed before the other is started. Just like our web3 contract the truffle-contract needs the abi and byte code we generated. So lets dive in... Notice the `.at(contractAddr)`, I mentioned this earlier. Our smart contract already exists on the testrpc so we can access it by passing in the address it lives at. We'll do this by getting it from the contractAddr.txt file. Lets break down our promise now. The first promise returns an instance object. This object is essentially our smart contract, we'll use the instance object to call store method. Lets go over the method call `instance.storeInVault(info, {from: web3.eth.accounts[0]});`So first we pass in our function's parameter, a string (Solidity will convert it to a bytes32 hex string). If you're wondering where the info variable came from, it's a command line parameter we pass in. Next we need to specify which wallet address is accessing the method. This is for transaction purposes, remember since we are updating some variable we need to pay some gas. Each function has a predetermined gas cost that will get subtracted out of our wallet. An address is also required since our method calls for the `msg` object.
+
+The next promise returns the response from the contract's function. The response will be an object that includes the transaction hash, reciept, and other values. You'll be able to explore these values, but I won't be covering that here. Lastly, we'll need to catch our promise with a simple error catch function. You've now interacted with your first smart contract!
+
+  - Run the command `yarn addinfo` to update our mapping variable
+
+### Getting Our Saved Variable
+Now that we have something saved inside of our mapping object, lets get it back out! Again here's the needed code, and lets walk through it
+```
+function getInfo() {
+  VaultContract.at(contractAddr).then((instance) => {
+    return instance.unlockVault.call({from: web3.eth.accounts[0]});
+  }).then((response) => {
+    console.log(web3.toAscii(response).toLocaleString());
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+```
+We've already defined the needed variables earlier so we can just peek at the function. Our first promise returns an instance of our smart contract again. Because our getter function has a return we need to invoke the `.call()` with our function call. This operation will grab us our return value. Just like the addInfo() function we need to pass an address, however this isn't because our function requires gas it's because we've associated an address as the key in our mapping. The second promise returns our response. If we were to just print out the response you'd see a hex string, this is
+because our function returns a bytes32 string. So we'll use a web3 function called `toAscii()`. This takes in our hex string and converts to readable
+characters. Lastly, we'll catch our promise again. Inside of the console you should be our string "helloworld" print out! There you have it, you've now successfully interacted with your smart contract! Now that we have some basics, we'll move onto creating a full-stack decentralized web-app.
