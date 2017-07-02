@@ -180,13 +180,24 @@ characters. Lastly, we'll catch our promise again. Inside of the console you sho
 ## Creating Your First Dapp
 Inside this project you'll find a folder called `dapp/`. This folder contains a full-fleged React application that can interact with our testrpc instance. For this section I'm going to assume some front-end knowledge as there would be a lot to cover. I will give a quick summary of what is going on, but if you have any in-depth questions I highly recommend taking a look at the documentation of the technologies I cover.
 
-### The Stack
-Simple enough the dapp's backend is written with Node.js leveraging the Express framework, while the front-end is powered by React. Our React components and dependencies are bundled together by Webpack. The front-end is utilizing EMCAScript 6 along with the stage two preset. This preset alongs us to use async rest calls, making our requests to the server really easy.
-
 ### Setup
   - cd into the dapp folder and run the command `yarn` to install all of the needed dependencies.
   - Use the command `yarn build` to bundle all of our source code
   - To launch the server run `yarn server`
 
 ### Using The Dapp
-  - Go to `
+  - Go to `http://localhost:1337/` to view the webapp. You'll notice the app is very minimal and is just setup for basic CRUD
+  - To save a value in our mapping structure copy one of the address from the testrpc running in the terminal window and write whatever you want to save
+  - You'll see after the request is made the transaction hash will be displayed below. This is essentially the reciept of the transaction.
+  - To get back whatever value you saved copy the address back into the next field and once the request finishes you should see the string below
+
+## Other Documentation
+  - Solidity Docs: `https://solidity.readthedocs.io/en/latest/`
+  - Truffle Framework Docs:  `http://truffleframework.com/docs/`
+  - Truffle-Contract Docs:  `https://github.com/trufflesuite/truffle-contract`
+  - Web3.js Docs: `https://github.com/ethereum/web3.js/`
+  - More Web3.js Docs: `https://github.com/ethereum/wiki/wiki/JavaScript-API`
+  - React Docs: `https://facebook.github.io/react/docs/hello-world.html`
+  - Express Docs: `https://expressjs.com/en/starter/hello-world.html`
+  - Yarn Docs: `https://yarnpkg.com/lang/en/docs/`
+  - Webpack Docs: `https://webpack.js.org/guides/getting-started/`
