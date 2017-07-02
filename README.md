@@ -1,23 +1,13 @@
 # Ethereum Primer
-Ethereum is one of the hottest blockchains out right now and is the first real mainstream coin
-to include smart contracts. Smart contracts allow developers to host contracts, think of a class in an OOP language, with logic on the 
-Ethereum blockchain. Smart contracts can be used to host auctions on the blockchain, store information, or use logic to determine when
-ether is sent out to another address. This primer will serve as a guide on how to quickly get started developing smart contracts in 
-Solidity (the language contracts are written in) and interacting with the Ethereum blockchain.
+Ethereum is one of the hottest blockchains right now due to its ability to scale and its introduction of smart contracts. Ethereum's blockchain allows developers to host contracts, think of an object in Java or C++, that include some logic. Contracts can be used to store information, run auctions, or determine when to ether to a wallet. In a nutshell Ethereum allows transactions to be complex and offer more than just peer to peer transactions. This primer will serve as a beginner's guide to developing contracts using Solidity, Ethereum's smart contract language, and interacting with a smart contract after deploying it to the blockchain.
 
 ## Clearing Up Some Jargon Before We Start
-This primer will take advantage of Truffle, a command line interface for working with the Ethereum blockchain.
-Truffle will help us out with compling our smart contracts and testing them. You are able to use Truffle to migrate your
-contracts to the blockchain, however in this guide we'll be doing those by hand as the Truffle migrations has issues
-when migrating to the Testrpc.
-
-Along with Truffle we'll be using Web3.js, the official Ethereum JavaScript API. Web3 has a lot of utility functions built in
-along with the ability to compile and deploy our smart contracts.
-
-I mentioned the Testrpc before so you might be wondering what that might be. Ethereum has three different blockchains: the real blockchain known
-as Homestead, the test network, and the testrpc. We'll be using the testrpc. The testrpc gives us a private blockchain right in our terminal window
-for testing applications. It also provides us with ten accounts with a large amount of fake ether in each for testing purposes. The testrpc is a good
-place to start developing your smart contracts as you don't need to manage different accounts or worry about running out of ether.
+### Truffle and Truffle-Contract
+This primer will take advantage of the Truffle CLI, a command line interface allowing us the easily compile, deploy, and test our smart contracts. Truffle-Contract is a node module that allows us to interact with our deployed contracts using JavaScript promises.
+### Web3.js
+Web3.js is the official Ethereum JavaScript API. Web3 offers a multitude of utility functions as well as giving us the ability to compile, deploy, and interact with our smart contracts.
+### Ethereumjs-testrpc
+Ethereum has three main blockchains: Homestead, Modern, and the Testrpc. Homestead is the real, for lack of a better word, blockchain and is what your production ready contracts will go on. Modern is a live testnet that will allow you test your contracts in a Homestead like environment, but the ether you use here is not real. Finally we have the testrpc, what we'll be using in this primer. The testrpc is a private, local blockchain that will allow you to test your contracts except here fake ether wallets, with a generous amount of ether in each, are generated for you.
 
 ## First Steps
   - Make sure you have npm, node, and git installed
@@ -28,15 +18,20 @@ place to start developing your smart contracts as you don't need to manage diffe
     project and want to use truffle you'll need to run `truffle init`. For npm users run `npm install`.
 
 ## Lets Talk About Dependencies
-This project has four major dependencies: ethereumjs-testrpc, truffle, truffle-contract, and web3. All of these should be familiar as we just talked about them in a previous section. If you've done any modern web development you probably recognize the other three dependencies, however if you haven't I'll explain. Adding the babel-cli and different presets allows us to use ES6 (the latest version of JavaScript) inside of our node.js scripts. For example instead of importing modules like: `var Web3 = require('web3');` we would use `import Web3 from 'web3';`. I would like to add that using ES6 is completely optional, however it's always good to be up to date with the latest technologies.
+This primer has four major dependencies: ethereumjs-testrpc, truffle, truffle-contract, and web3. We've already touched on these dependencies and we'll go into further detail as well soon. If you have explored the project you might have noticed some Babel dependencies inside of our root package.json file. Babel allows us to write our JavaScript in ES6, the latest version of JavaScript. So for example instead of `var Web3 = require('web3')`, we write `import Web3 from 'web3'`. I'll leave documentation regarding Babel and EMCAScript 6 if you are interested in learning more. 
 
 ## How About That Directory Structure
-You'll notice that everything is generally at the root level. After running `yarn` you'll get your node_modules folder, which will have all of
-our dependencies. After running `truffle init` you probably notice some folders were added and a truffle.js file was created. Lets walk through all of
-those. The truffle.js file just exports the network settings of the blockchain you want to connect to. The default is the testrpc so we don't need to
-change anything, however if you want to start working on the test network or even Homestead you'd need to change the configs inside of the networks object. The contracts folder is where all of your smart contracts will go. When you run `truffle compile` it will look into that folder and compile
-any smart contracts that have been altered. The migrations folder is used to migrate your contracts to the blockchain with the `truffle migrate` command. In this guide we will be using web3.js to migrate our contracts as there still is an open issue when using truffle to migrate contracts
-to the testrpc. However the migration command works fine when migrating to the test network or Homestead. The test folder holds all of your tests. You'll be able to test your contracts using Solidity or JavaScript. I've left the sample test Truffle provides so you can take a look at how it's structured. Lastly we have main.js. This script is what we'll be using to deploy and interact with our smart contract. I have the script setup to take in command line arguments and our commands will be invoked by running yarn scripts. I'll go over that once we touch that part of the guide.
+In this section we'll quickly gloss over the primer's directory structure. Everything you'll need is in the root directory of the project and most of the operations we'll be running are controled by yarn scripts.
+### Folders
+  - `contracts/`: This folder will house all of the contracts we write
+  - `migrations/`: This folder holds truffle's migration files, however we'll be using web3 to deploy our contracts as there still is an open issue when using truffle to migrate contracts to the testrpc. You'll still need the folder and files if you plan on testing your contracts though.
+  - `test/`: This folder will hold all of your tests. Note that you can write tests in JavaScript or Solidity.
+  - `dapp/`: Later in the primer I will discuss Decentralized Applications. Inside of the folder is a full flegded Dapp running on Express using React.
+
+### Files
+  - `main.js`: Our main Node script that will deploy and allow us to interact with our smart contract. We'll using yarn scripts to run this file, so I recommend taking a look at the package.json file so you can follow the command line parameters we're passing into our script.
+  - `truffle.js`: Truffle's network config file. This tells truffle where our blockchain instance is. By default it points to the testrpc, however you'd need to change up the environment variables if you want to start using Modern or Homestead.
+  - `contractAddr.txt`: Text file to hold our contract's address on the blockchain. I'll go into detail later, but it'll be easier to access our smart contract's address if we save it into a text file.
 
 ## Let's Look At A Simple Solidity Contract
 Like we discussed earlier the blockchain is excellent for storing information so lets make a simple contract that allows users to store
@@ -61,8 +56,6 @@ contract StoreInformation {
   }
 
 }
-
-
 ```
 The first line of our contract `pragma solidity ^0.4.11` simply specifies the compiler and version we want to use. 0.4.11 is currently
 the latest stable compiler version with 0.4.12 for nightly builds. Now we want to wrap all of our logic inside of a contract. You can think of
@@ -73,34 +66,34 @@ access a method not defined or if no data was passed in the function call, it's 
 function. We pass in an item to save into our mapping. You'll notice the object `msg`. When we want to access a contract's methods we need to also
 pass a wallet address. `msg.sender` is equal to the wallet address we pass. I'll go over this in more detail when we go over interacting with our smart
 contract. Lasty we have our getter function. We simply return the 32 byte hex string associated with the address. There you have it, that is your first
-Ethereum smart contract! When we go our Dapps, decentralized applications, we'll build upon this example by adding some more complexity to the contract.
+Ethereum smart contract!
 
-## Compiling Our Contracts And Migration To The Testrpc
-Now that we have a smart contract lets compile it and move it onto the testrpc! To compile our contract run the command `truffle compile`. Note that you'll get a warning saying our variable x inside of the fallback function isn't used. This is fine as fallback functions are not allowed to return
-anything. Now you'll notice a build folder was just created. If you look inside you should see a contracts folder and inside that a JSON file. This
-JSON file contains our contract object essentially. I'm going to cover the two important values inside of the JSON file, the abi and unlinked binary.
-The contract's abi is what tells the blockchain what methods our contract has and what they return. The unlinked binary is essentially the byte code of the contract and this is what gets run on the blockchain. Now that we have compiled our contract lets talk about migration.
+## Compiling Our Contracts
+Now that we have written a smart contract we'll need to compile it and then deploy it to the blockchain. In the next few steps I'll be discussing how we'll go about doing that.
 
-### Running The Testrpc
-  - Open a new terminal window and navigate to the directory our project is in.
-  - Run the command `yarn testrpc`. This will start up the testrpc blockchain.
-  You'll notice that the testrpc is officially running and you'll be able to see the ten account address you have access to. There are extra command line arguments you can add when you run the testrpc, like set the gas price, but for our primer the default is more than fine.
+### Compiling A Smart Contract
+To compile a smart contract run the command `truffle compile` and if everything goes well you'll see a new folder `build/`. Inside this folder is a JSON file that'll have all of the necessary information we'll need to migrate our contract to the blockchain. I'll touch on the two main fields we'll need.
+  - The ABI: The abi is a json object that contains all of the methods our contract has and what they return. This will let the blockchain know what our smart contract can do when we attempt to interact with it.
+  - Unlinked binary: This is essentially our smart contract compiled into byte code. This is what will actually get run on the blockchain.
+
+## Migrating Our Contract To The Testrpc
+In these nexts steps I'll be explaining how we're going to get our smart contract onto our testrpc instance. 
+
+### Create A Testrpc Instance
+Open up a new terminal window, navigate to the primer folder and then run the command `yarn testrpc`. This will create a testrpc instance inside of your terminal window. When the testrpc boots up you should see ten wallet address, these are the wallets we can use for free and some other information. Whenever we interact with the testrpc it'll give us a printout of the action.
 
 ### Contract Migration
-As I stated earlier our main.js file handles all of our migrations and interactions with the smart contract. Because I'll be referencing the main.js file for the next few steps I'm only going to show the code for each step and do a full paste at the end of the guide. I'll paste the necessary code
-for this step below...
+As I stated earlier our main.js file handles all of our migrations and interactions with the smart contract. Because I'll be referencing the main.js file for the next few steps I'm only going to show the code for each step.
 ```
-// These are the variable definitions needed for the migrations
-// Note that most of these are needed for each step so reference back here if you need them again
-import Web3 from 'web3';
-import contract from 'truffle-contract';
-import fs from 'fs';
+// You'll need to import all of the necessary dependencies up here before you can use
+// Any of the node modules we've installed
 
 const compiledJson = JSON.parse(fs.readFileSync('build/contracts/StoreInformation.json'));
 const provider = new Web3.providers.HttpProvider("http://localhost:8545");
 const contractAddr = fs.readFileSync("contractAddr.txt").toString();
 
 const web3 = new Web3();
+// Point our web3 object to the testrpc instance
 web3.setProvider(provider);
 
 // Migration function
@@ -116,22 +109,15 @@ function migrateContract() {
   }
 }
 ```
-Okay so first we're going to import all of our modules. For migrating our contract we don't actaully need the truffle-contract module, but for
-completeness I left it in for future reference. First we need to grab the JSON file we got when we compiled our contract using the `fs` module.
-Next we need to create our provider variable. The provider will point our web3 object and in the future our contract instance to the blockchain
-we are working with. Next we'll create our web3 object and then pass the provider we just made so our web3 object is aware of the testrpc we just launched. Now we can take a look at our migration function. First we're going to create a contract object. web3 allows us to do that by really easily
-by calling the contract function and passing the defined abi from our JSON file. Next we'll deploy a new contract to the testrpc. Lets break down the
-line `const deployedVaultContract = VaultContract.new({data: compiledJson.unlinked_binary, from: web3.eth.accounts[0], gas: 4700000})`. New means
-we want to make a new contract. Other options available to us are at and update. We'll be using the at constructor later in the primer. Next we need
-to pass in an object that contains a few things. The data field will take the byte code we discussed earlier. The blockchain needs to keep track of
-what address deploys which contract so we need to pass in an address. Because we pointed our web3 object to the testrpc we can access the ten
-accounts that comes with it. We'll look into some more web3 functions later as well. Finally to deploy a smart contract we need give it some gas
-as well. Now look at our testrpc running in the terminal, you should be able to see the contract transaction. You should see the address the contract is at, you'll need to copy and paste that into the `contractAddr.txt` file so we can access that contract in future steps.
+First we need to grab the JSON file `truffle compile` generated for us. We'll need to be able to access the contract's abi and byte code when we deploy it to the testrpc. Next we need to create our provider constant. This constant is essentially the path to our testrpc instance. We'll be passing it to our Web3 object so it knows where the testrpc is come deployment time. When our Web3 object is connected to the testrpc we can use the `.eth` extension to view the accounts inside the testrpc, their balances, and other information pretaining to our blockchain instance. Now lets go over the migration function.
+  - `const VaultContract = web3.eth.contract(compliedJson.abi);`: This creates a new contract object. We pass in the abi to let the object know what it's able to do
+  - `const deployedContract = VaultContract.new({data: compiledJson.unlinked_binary, from: web3.eth.accounts[0], gas: 4700000});`
+     This command creates a new VaultContract object on our testrpc. When creating a new contract we are required to pass in an object with some fields. The data field contains our byte code, simple enough. The blockchain needs to keep track of what address deployed the contract so we need to pass an address in. Finally we need to pay some ether in the form of gas to get our contract onto the blockchain. The concept of gas is a little tough to wrap your head around so I'll leave this link that explains it extremely well, `https://ethereum.stackexchange.com/questions/3/what-is-meant-by-the-term-gas`. 
 
-  - Run the command `yarn migrate` to migrate our contract to the testrpc
+To migrate our contract use the command `yarn migrate`. After you deploy the contract you should see the contract's address print out in the testrpc instance running in your other terminal window. Copy and paste that into the `contractAddr.txt` file so we can access our contract later.
 
 ## Interacting With Our Contract
-Now that our smart contract is on the blockchain lets interact with it! Like before I'll show some code and we'll go over everything. Before I'd like to touch on two important things when interacting with the blockchain. When you call a function that alters a variable inside of the contract that will require gas. However, when you are simply accessing and returning a value that requires no gas since you aren't altering anything. You specify the operation with the `.call()` addition to the method call. You'll see this in action soon.
+Now that our smart contract is on the blockchain lets interact with it! Like before I'll show some code and we'll go over everything.
 
 ### Updating Our Mapping Variable
 ```
@@ -154,11 +140,12 @@ function addInfo(info) {
   });
 }
 ```
-First we'll need to create a contract object using truffle-contract. As I mentioned earlier web3.js allows us to interact with our smart contracts, however by using truffle we'll be using promises which in turn makes the interactions better as each step will be completed before the other is started. Just like our web3 contract the truffle-contract needs the abi and byte code we generated. So lets dive in... Notice the `.at(contractAddr)`, I mentioned this earlier. Our smart contract already exists on the testrpc so we can access it by passing in the address it lives at. We'll do this by getting it from the contractAddr.txt file. Lets break down our promise now. The first promise returns an instance object. This object is essentially our smart contract, we'll use the instance object to call store method. Lets go over the method call `instance.storeInVault(info, {from: web3.eth.accounts[0]});`So first we pass in our function's parameter, a string (Solidity will convert it to a bytes32 hex string). If you're wondering where the info variable came from, it's a command line parameter we pass in. Next we need to specify which wallet address is accessing the method. This is for transaction purposes, remember since we are updating some variable we need to pay some gas. Each function has a predetermined gas cost that will get subtracted out of our wallet. An address is also required since our method calls for the `msg` object.
+The first set here is to use `truffle-contract` to create a contract object so we can interact with our deployed smart contract using promises. After that we'll need to use our provider constant to point our contract object to the testrpc instance. Now lets go over the function.
+  - `VaultContract.at(contractAddr)...` will access a VaultContract object that lives on the testrpc at that address.
+  - When the contract is accessed it returns an instance object. This object is what we'll use to call all of the functions inside of our smart contract
+`instance.storeInVault(info, {from: web3.eth.accounts[0]});` calls our storeInVault function. We pass in a string we've defined as a command line argument ("helloworld") and we need to pass in a wallet address. Remember our mapping variable uses an address as the key to each value. Since we pointed our Web3 object to the testrpc we can use one of the ten accounts we get for free. Our final step in our promise chain prints out the response our transaction generates. You should see an object that contains the transaction hash, block number, amount of gas used, etc.
 
-The next promise returns the response from the contract's function. The response will be an object that includes the transaction hash, reciept, and other values. You'll be able to explore these values, but I won't be covering that here. Lastly, we'll need to catch our promise with a simple error catch function. You've now interacted with your first smart contract!
-
-  - Run the command `yarn addinfo` to update our mapping variable
+Run the command `yarn addinfo` to add a value to our mapping variable. Inside the testrpc window you should see the transaction hash upon completion.
 
 ### Getting Our Saved Variable
 Now that we have something saved inside of our mapping object, lets get it back out! Again here's the needed code, and lets walk through it
@@ -173,12 +160,37 @@ function getInfo() {
   });
 }
 ```
-We've already defined the needed variables earlier so we can just peek at the function. Our first promise returns an instance of our smart contract again. Because our getter function has a return we need to invoke the `.call()` with our function call. This operation will grab us our return value. Just like the addInfo() function we need to pass an address, however this isn't because our function requires gas it's because we've associated an address as the key in our mapping. The second promise returns our response. If we were to just print out the response you'd see a hex string, this is
-because our function returns a bytes32 string. So we'll use a web3 function called `toAscii()`. This takes in our hex string and converts to readable
-characters. Lastly, we'll catch our promise again. Inside of the console you should be our string "helloworld" print out! There you have it, you've now successfully interacted with your smart contract! Now that we have some basics, we'll move onto creating a full-stack decentralized web-app.
+Let before we are going to use `VaultContract.at(contractAddr)...` to get an instance object of the contract that lives at that specified address. Now our method call looks a little different than before, lets go over that. Because we just want to access and return whatever value is stored inside of our mapping variable there is no need to create a transaction on the network. Whenever we create a transaction on the network, for example updating our mapping variable, that will cost us gas. So by rule of thumb when you are just interested in getting a value from your contract us the `.call()` function as this won't cost any gas because no transaction is created. We'll need to pass an address to the call function so we can get our value out. Remeber that our value is of type bytes32 so we'll use a web3 function `.toAscii()` to convert the hex string back to readable characters.
+
+Run the command `yarn getinfo` to grab our value. Inside of the testrpc window you'll see the transaction hash again and inside your other terminal window you should see "helloworld" printed out to the console.
 
 ## Creating Your First Dapp
 Inside this project you'll find a folder called `dapp/`. This folder contains a full-fleged React application that can interact with our testrpc instance. For this section I'm going to assume some front-end knowledge as there would be a lot to cover. I will give a quick summary of what is going on, but if you have any in-depth questions I highly recommend taking a look at the documentation of the technologies I cover.
+
+### What's In The Stack
+On the backend side I have a simple Express server running with two rest endpoints, a getter and a setter function. On the frontend side I am using React to render the site and handle any functionality. To bundle the source code and all the necessary dependencies I have leveraged Webpack 2. You can look over the `webpack.config.js` file to look over how that's being accomplished. I've added the babel preset called stage two so we can use fetch inside of an async function for all of the rest calls. I'll leave sample code here so you can take a look in case you're interested in how that looks..
+
+```
+async handleAdd(event) {
+    event.preventDefault();
+    try {
+      // Await is essentially a promise and the response variable won't be set until the fetch call is completed
+      let response = await fetch(`/add?address=${this.state.address}&value=${this.state.value}`);
+      //  We'll use await here as well to complete the promise
+      let responseData = await response.json();
+      console.log(responseData.resp);
+      let tempArray = this.state.transactions;
+      tempArray.push(responseData.resp.tx);
+      this.setState({
+        value: '',
+        address: '',
+        transactions: tempArray
+      });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+```
 
 ### Setup
   - cd into the dapp folder and run the command `yarn` to install all of the needed dependencies.
@@ -201,3 +213,5 @@ Inside this project you'll find a folder called `dapp/`. This folder contains a 
   - Express Docs: `https://expressjs.com/en/starter/hello-world.html`
   - Yarn Docs: `https://yarnpkg.com/lang/en/docs/`
   - Webpack Docs: `https://webpack.js.org/guides/getting-started/`
+  - Babel Docs: `https://babeljs.io/docs/setup/#installation`
+  - EMCAScript 6: `http://es6-features.org/#Constants`
