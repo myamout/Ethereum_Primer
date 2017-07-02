@@ -2,3 +2,6 @@ node_modules/
 build/
 contractAddr.txt
 yarn.lock
+dapp/yarn.lock
+dapp/node_modules/
+dapp/dist/js
