@@ -36,9 +36,7 @@ our dependencies. After running `truffle init` you probably notice some folders 
 those. The truffle.js file just exports the network settings of the blockchain you want to connect to. The default is the testrpc so we don't need to
 change anything, however if you want to start working on the test network or even Homestead you'd need to change the configs inside of the networks object. The contracts folder is where all of your smart contracts will go. When you run `truffle compile` it will look into that folder and compile
 any smart contracts that have been altered. The migrations folder is used to migrate your contracts to the blockchain with the `truffle migrate` command. In this guide we will be using web3.js to migrate our contracts as there still is an open issue when using truffle to migrate contracts
-to the testrpc. However the migration command works fine when migrating to the test network or Homestead. The test folder holds all of your tests. You'll be able to test your contracts using Solidity or JavaScript and I've provided example tests for both. Lastly we have main.js. This script is
-what we'll be using to deploy and interact with our smart contract. I have the script setup to take in command line arguments and our commands will
-be invoked by running yarn scripts. I'll go over that once we touch that part of the guide.
+to the testrpc. However the migration command works fine when migrating to the test network or Homestead. The test folder holds all of your tests. You'll be able to test your contracts using Solidity or JavaScript. I've left the sample test Truffle provides so you can take a look at how it's structured. Lastly we have main.js. This script is what we'll be using to deploy and interact with our smart contract. I have the script setup to take in command line arguments and our commands will be invoked by running yarn scripts. I'll go over that once we touch that part of the guide.
 
 ## Let's Look At A Simple Solidity Contract
 Like we discussed earlier the blockchain is excellent for storing information so lets make a simple contract that allows users to store
@@ -180,4 +178,15 @@ because our function returns a bytes32 string. So we'll use a web3 function call
 characters. Lastly, we'll catch our promise again. Inside of the console you should be our string "helloworld" print out! There you have it, you've now successfully interacted with your smart contract! Now that we have some basics, we'll move onto creating a full-stack decentralized web-app.
 
 ## Creating Your First Dapp
-*Still under construction...*
+Inside this project you'll find a folder called `dapp/`. This folder contains a full-fleged React application that can interact with our testrpc instance. For this section I'm going to assume some front-end knowledge as there would be a lot to cover. I will give a quick summary of what is going on, but if you have any in-depth questions I highly recommend taking a look at the documentation of the technologies I cover.
+
+### The Stack
+Simple enough the dapp's backend is written with Node.js leveraging the Express framework, while the front-end is powered by React. Our React components and dependencies are bundled together by Webpack. The front-end is utilizing EMCAScript 6 along with the stage two preset. This preset alongs us to use async rest calls, making our requests to the server really easy.
+
+### Setup
+  - cd into the dapp folder and run the command `yarn` to install all of the needed dependencies.
+  - Use the command `yarn build` to bundle all of our source code
+  - To launch the server run `yarn server`
+
+### Using The Dapp
+  - Go to `
