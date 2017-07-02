@@ -178,3 +178,6 @@ function getInfo() {
 We've already defined the needed variables earlier so we can just peek at the function. Our first promise returns an instance of our smart contract again. Because our getter function has a return we need to invoke the `.call()` with our function call. This operation will grab us our return value. Just like the addInfo() function we need to pass an address, however this isn't because our function requires gas it's because we've associated an address as the key in our mapping. The second promise returns our response. If we were to just print out the response you'd see a hex string, this is
 because our function returns a bytes32 string. So we'll use a web3 function called `toAscii()`. This takes in our hex string and converts to readable
 characters. Lastly, we'll catch our promise again. Inside of the console you should be our string "helloworld" print out! There you have it, you've now successfully interacted with your smart contract! Now that we have some basics, we'll move onto creating a full-stack decentralized web-app.
+
+## Creating Your First Dapp
+*Still under construction...*
