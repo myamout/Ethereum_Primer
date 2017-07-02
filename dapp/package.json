@@ -13,6 +13,8 @@
     "express": "^4.15.3",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "truffle-contract": "^2.0.1",
+    "web3": "^0.19.1",
     "wingcss": "^1.0.0-beta"
   },
   "devDependencies": {
